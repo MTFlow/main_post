@@ -389,9 +389,9 @@ int main(int narg, char **arg)
 
 	double Nstep = ((stop-start)/step_size) + 1;
 
-	fprintf(screen,"\n=======================================================\n");
+	fprintf(screen,"\n%s\n",lineD);
 	fprintf(screen,"INPUT");
-	fprintf(screen,"\n-------------------------------------------------------\n");
+	fprintf(screen,"\n%s\n",lineS);
 	fprintf(screen,"%-16s%-25s%s\n","NAME","COMMAND","VALUE");
 	fprintf(screen,"%-16s%-25s%d\n","Start","-start",start);
 	fprintf(screen,"%-16s%-25s%d\n","Stop","-stop",stop);
@@ -405,7 +405,7 @@ int main(int narg, char **arg)
 	fprintf(screen,"%-16s%-25s%f\n","vmax","-vmax",vmax);
 	if (zloflag) fprintf(screen,"%-16s%-25s%f\n","ZLO","-zlo",ZLO);
 	if (zhiflag) fprintf(screen,"%-16s%-25s%f\n","ZHI","-zhi",ZHI);
-	fprintf(screen,"=======================================================\n");
+	fprintf(screen,"%s\n",lineD);
 
 	double temp[N][3];
 	double temp1[N][4];
@@ -478,9 +478,7 @@ int main(int narg, char **arg)
 		}
 	}
 
-
 	tinit += clock() - tinits;
-
 	double value = 1.0;
 		
 
@@ -507,11 +505,11 @@ int main(int narg, char **arg)
 			den = new double[N];
 			bin_mean_z = new double[N];
 
-			fprintf(screen,"\n=======================================================\n");
+			fprintf(screen,"\n%s\n",lineD);
 			fprintf(screen,"BINFLAG");
-			fprintf(screen,"\n-------------------------------------------------------\n");
+			fprintf(screen,"\n%s\n",lineS);
 			fprintf(screen,"Occupation: %.2f",occupation);
-			fprintf(screen,"\n-------------------------------------------------------");
+			fprintf(screen,"\n%s",lineS);
 			run = 0; //binflag
 
 
@@ -769,7 +767,7 @@ int main(int narg, char **arg)
 
 //		fprintf(screen,"\n-------------------------------------------------------\n");
 //		if (binflag) fprintf(screen,"Minimum occupation: %.2f - bin: %d\n",min_occ,min_bin);
- 		fprintf(screen,"\n=======================================================\n");
+ 		fprintf(screen,"\n%s\n",lineD);
 
 
 		int ll = 1;
@@ -853,9 +851,9 @@ int main(int narg, char **arg)
 
 		trun1s = clock();
 
-		fprintf(screen,"\n=======================================================\n");
+		fprintf(screen,"\n%s\n",lineD);
 		fprintf(screen,"RUN 1");
-		fprintf(screen,"\n-------------------------------------------------------\n");
+		fprintf(screen,"\n%s\n",lineS);
 		fprintf(screen,"Time steps:");
 		run = 1;
 
@@ -962,7 +960,7 @@ int main(int narg, char **arg)
 			} // end of start
 		} // end of while
 		trun1 += clock() - trun1s;
-		fprintf(screen,"\n=======================================================\n");
+		fprintf(screen,"\n%s\n",lineD);
 
 
 	fclose(ftemp);
@@ -1061,37 +1059,37 @@ int main(int narg, char **arg)
 	double seconds = total_time - (hours*3600.0) - (minutes*60.0);
 
 	if (post) {	
-		fprintf(screen,"=======================================================\n");
+		fprintf(screen,"%s\n",lineD);
 		fprintf(screen,"TASK TIMING BREAKDOWN:\n");
 		fprintf(screen,"Section | total [hr:min:sec]\n");
-		fprintf(screen,"-------------------------------------------------------\n");
+		fprintf(screen,"%s\n",lineS);
 		fprintf(screen,"INIT    | %02.0f:%02.0f:%02.5f\n",fh(tinit),fm(tinit),fs(tinit));
-		fprintf(screen,"-------------------------------------------------------\n");
+		fprintf(screen,"%s\n",lineS);
 		fprintf(screen,"BIN     | %02.0f:%02.0f:%02.5f\n",fh(tbin),fm(tbin),fs(tbin));
 		fprintf(screen,"-Read   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(tbin_read),fm(tbin_read),fs(tbin_read),100*tbin_read/tbin);
 		fprintf(screen,"-Assign | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(tbin_assign),fm(tbin_assign),fs(tbin_assign),100*tbin_assign/tbin);
 		fprintf(screen,"-Occup. | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(tbin_occup),fm(tbin_occup),fs(tbin_occup),100*tbin_occup/tbin);
 		fprintf(screen,"-Prop.  | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(tbin_prop),fm(tbin_prop),fs(tbin_prop),100*tbin_prop/tbin);
 		fprintf(screen,"-Bin    | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(tbin_bin),fm(tbin_bin),fs(tbin_bin),100*tbin_bin/tbin);
-		fprintf(screen,"-------------------------------------------------------\n");
+		fprintf(screen,"%s\n",lineS);
 		fprintf(screen,"RUN 1   | %02.0f:%02.0f:%02.5f\n",fh(trun1),fm(trun1),fs(trun1));
 		fprintf(screen,"-Read   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(trun1_read),fm(trun1_read),fs(trun1_read),100*trun1_read/trun1);
 		fprintf(screen,"-Assign | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(trun1_assign),fm(trun1_assign),fs(trun1_assign),100*trun1_assign/trun1);
 		fprintf(screen,"-Prop.  | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(trun1_prop),fm(trun1_prop),fs(trun1_prop),100*trun1_prop/trun1);
-		fprintf(screen,"-------------------------------------------------------\n");
+		fprintf(screen,"%s\n",lineS);
 		fprintf(screen,"WRITE   | %02.0f:%02.0f:%02.5f\n",fh(total_write),fm(total_write),fs(total_write));
 		fprintf(screen,"-g(r)   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(twrite_gr),fm(twrite_gr),fs(twrite_gr),100*twrite_gr/total_write);
 		fprintf(screen,"-Vel.   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(twrite_vel),fm(twrite_vel),fs(twrite_vel),100*twrite_vel/total_write);
 		fprintf(screen,"-Var.   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(twrite_var),fm(twrite_var),fs(twrite_var),100*twrite_var/total_write);
 		fprintf(screen,"-Bin    | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(twrite_bin),fm(twrite_bin),fs(twrite_bin),100*twrite_bin/total_write);
-		fprintf(screen,"-------------------------------------------------------\n");
+		fprintf(screen,"%s\n",lineS);
 		fprintf(screen,"TOTAL   | %02.0f:%02.0f:%02.5f\n",fh(ttotal),fm(ttotal),fs(ttotal));
 		fprintf(screen,"-Assign | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(total_assign),fm(total_assign),fs(total_assign),100*total_assign/ttotal);
 		fprintf(screen,"--Bin   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(tbin2),fm(tbin2),fs(tbin2),100*tbin2/total_assign);
 		fprintf(screen,"-Prop.  | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(total_prop),fm(total_prop),fs(total_prop),100*total_prop/ttotal);
 		fprintf(screen,"-Read   | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(total_read),fm(total_read),fs(total_read),100*total_read/ttotal);
 		fprintf(screen,"-Write  | %02.0f:%02.0f:%02.5f (%05.2f%%)\n",fh(total_write),fm(total_write),fs(total_write),100*total_write/ttotal);
-		fprintf(screen,"=======================================================\n\n");
+		fprintf(screen,"%s\n\n",lineD);
 	}
 
 
