@@ -33,6 +33,9 @@ bigint ntimestep,natoms;
 int size_one,nchunk,triclinic;
 double xlo,xhi,ylo,yhi,zlo,zhi,xy,xz,yz;
 
+char *lineS = NULL;
+char *lineD = NULL;
+
 double ZLO,ZHI;
 int zloflag, zhiflag;
 
