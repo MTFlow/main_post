@@ -45,7 +45,7 @@ void help() {
 };
 
 void input_check(FILE *fp) {
-	fprintf(screen,"\n=======================================================\n");
+	fprintf(screen,"\n%s\n",lineD);
 	fprintf(screen,"CHECK INPUT ARGUMENTS\n");
 
 	int I = 0;	
@@ -113,7 +113,7 @@ void input_check(FILE *fp) {
 	if (stop < start) {
 		fprintf(screen,"PROGRAM TERMINATED >> Start value %d larger than stop value %d\n",start,stop);
 		fprintf(screen,"CHECK INPUT ARGUMENTS\n");
-		fprintf(screen,"=======================================================\n\n");
+		fprintf(screen,"%s\n\n",lineD);
 		fclose(fp);	
 		exit(1);
 	}
@@ -142,28 +142,28 @@ void input_check(FILE *fp) {
 
 	if (!flag)	fprintf(screen,"OKE\n");
 //	fprintf(screen,"CHECK INPUT ARGUMENTS\n");
-	fprintf(screen,"-------------------------------------------------------\n");
+	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"ATOM ATTRIBUTES\n%d\n",size_one);
 	fprintf(screen,"1:Mass | 2:Mol | 3:Id | 4:Type | \n5:x | 6:y | 7:z | 8:vx | 9:vy | 10:vz | \n11:Ke | 12:Pe | \n13:Sxx | 14:Syy | 15:Szz | 16:Sxy | 17:Sxz | 18:Syz\n");
-	fprintf(screen,"-------------------------------------------------------\n");
+	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"BOX BOUNDARIES\n");
 	fprintf(screen,"X: %c%c | Y: %c%c | Z: %c%c\n",boundstr[0],boundstr[1],boundstr[3],boundstr[4],boundstr[6],boundstr[7]);
-	fprintf(screen,"-------------------------------------------------------\n");
+	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"BOX DIMENSIONS\n");
 	fprintf(screen,"Xlo: %.2f | Xhi: %.2f\n",xlo,xhi);
 	fprintf(screen,"Ylo: %.2f | Yhi: %.2f\n",ylo,yhi);
 	fprintf(screen,"Zlo: %.2f | Zhi: %.2f\n",zlo,zhi);
-	fprintf(screen,"-------------------------------------------------------\n");
+	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"NUMBER OF ATOMS\n");
 	fprintf(screen, BIGINT_FORMAT "\n",natoms);
-	fprintf(screen,"-------------------------------------------------------\n");
+	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"NUMBER OF PROCESSORS USED\n");
 	fprintf(screen,"%d\n",nchunk);
-	fprintf(screen,"-------------------------------------------------------\n");
+	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"STEPS BETWEEN OUTPUT DATA\n");
 	fprintf(screen,"%d\n",TIME[1]-TIME[0]);
 
-	fprintf(screen,"=======================================================\n");
+	fprintf(screen,"%s\n",lineD);
 
 }
 
@@ -189,19 +189,6 @@ int main(int narg, char **arg)
 
 //	Gnuplot gp;
 
-	time_t now = time(0);
-	tm *ltm = localtime(&now);
-	int year = 1900 + ltm->tm_year;
-	int month = 1 + ltm->tm_mon;
-	int day = ltm->tm_mday;
-	int hour = ltm->tm_hour;
-	int minute = ltm->tm_min;
-	int second = ltm->tm_sec;
-
-	fprintf(screen,"\n=======================================================\n");
-	fprintf(screen,"Date: %02d/%02d/%04d (d/m/y)\n",day,month,year);
-	fprintf(screen,"Time: %02d:%02d:%02d (hr:min:sec)",hour,minute,second);
-	fprintf(screen,"\n=======================================================\n");
 //	fprintf(screen,"Working directory: %s\n");
 
 //set initial values
@@ -351,6 +338,21 @@ int main(int narg, char **arg)
 		} else {fprintf(screen,"Illegal name: '%s'\n",arg[iarg]); return 1;};
 		iarg += 2;
 	}
+
+	time_t now = time(0);
+	tm *ltm = localtime(&now);
+	int year = 1900 + ltm->tm_year;
+	int month = 1 + ltm->tm_mon;
+	int day = ltm->tm_mday;
+	int hour = ltm->tm_hour;
+	int minute = ltm->tm_min;
+	int second = ltm->tm_sec;
+
+	fprintf(screen,"\n%s\n",lineD);
+	fprintf(screen,"Date: %02d/%02d/%04d (d/m/y)\n",day,month,year);
+	fprintf(screen,"Time: %02d:%02d:%02d (hr:min:sec)",hour,minute,second);
+	fprintf(screen,"\n%s\n",lineD);
+
 
 	FILE *fp = fopen(arg[1],"rb");
 	if (!fp) {
