@@ -17,8 +17,8 @@
 #include <ctime>
 #include <cmath>
 #include <string>
-//#include <boost/tuple/tuple.hpp>
-//#include "gnuplot-iostream.h"
+#include <boost/tuple/tuple.hpp>
+#include "gnuplot-iostream.h"
 
 void help() {
 	printf(
@@ -150,9 +150,9 @@ void input_check(FILE *fp) {
 	fprintf(screen,"X: %c%c | Y: %c%c | Z: %c%c\n",boundstr[0],boundstr[1],boundstr[3],boundstr[4],boundstr[6],boundstr[7]);
 	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"BOX DIMENSIONS\n");
-	fprintf(screen,"Xlo: %.2f | Xhi: %.2f\n",xlo,xhi);
-	fprintf(screen,"Ylo: %.2f | Yhi: %.2f\n",ylo,yhi);
-	fprintf(screen,"Zlo: %.2f | Zhi: %.2f\n",zlo,zhi);
+	fprintf(screen,"Xlo: %-10.2f | %-5s Xhi: %-10.2f | %-5s dX: %.2f\n",xlo,"",xhi,"",xhi-xlo);
+	fprintf(screen,"Ylo: %-10.2f | %-5s Yhi: %-10.2f | %-5s dY: %.2f\n",ylo,"",yhi,"",yhi-ylo);
+	fprintf(screen,"Zlo: %-10.2f | %-5s Zhi: %-10.2f | %-5s dZ: %.2f\n",zlo,"",zhi,"",zhi-zlo);
 	fprintf(screen,"%s\n",lineS);
 	fprintf(screen,"NUMBER OF ATOMS\n");
 	fprintf(screen, BIGINT_FORMAT "\n",natoms);
@@ -187,7 +187,7 @@ inline double fs(double sec) {
 int main(int narg, char **arg)
 {
 
-//	Gnuplot gp;
+	Gnuplot gp;
 
 //	fprintf(screen,"Working directory: %s\n");
 
@@ -204,7 +204,7 @@ int main(int narg, char **arg)
 	vmin = -0.01;
 	vmax = 0.01;
 	post = 1;
-	M = 30; //SIZE OF PROP ARRAY;
+	M = 32; //SIZE OF PROP ARRAY;
   zloflag = 0;
 	zhiflag = 0;
 	equalbin = 0;
@@ -212,6 +212,7 @@ int main(int narg, char **arg)
 	flag_GR = 0;
 	flag_VACF = 0;
 	flag_MSD = 0;
+	plot = 0;
 
 	lineD = new char[91];
 	strcpy(lineD,"==========================================================================================");
@@ -330,6 +331,9 @@ int main(int narg, char **arg)
 		} else if ( strcmp(arg[iarg],"-flag_MSD") == 0 ) {
 			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
 			flag_MSD = atoi(arg[iarg+1]);
+		} else if ( strcmp(arg[iarg],"-plot") == 0 ) {
+			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
+			plot = atoi(arg[iarg+1]);
 //		} else if ( strcmp(arg[iarg],"-no_ocp") == 0 ) {
 //			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
 //			char *str = arg[iarg+1];
@@ -362,6 +366,10 @@ int main(int narg, char **arg)
 
 	input_check(fp);
 	fseek(fp,0,SEEK_SET);
+
+
+	DATA = new double[natoms*3];
+
 
 	msd = 1;
 	vacf = 1;
@@ -483,10 +491,9 @@ int main(int narg, char **arg)
 	tinit += clock() - tinits;
 	double value = 1.0;
 		
-
 	// Gnuplot vectors (i.e. arrows) require four columns: (x,y,dx,dy)
-//	std::vector<boost::tuple<double, double, double, double> > pts_A;
-//	gp << "set terminal wxt size 1500,900\n";
+	std::vector<boost::tuple<double, double, double, double> > pts_A;
+	gp << "set terminal wxt size 1500,900\n";
 
 //==========BIN==========//
 
@@ -580,6 +587,9 @@ int main(int narg, char **arg)
 
 						for(int i1 = 0; i1 < N*M; i1++ ) prop[i1] = 0.0;
 
+						int temp = 0;
+						int tmp = 0;
+
 						for (int i = 0; i < nchunk; i++) {
 							tbin_reads = clock();
 							fread(&n,sizeof(int),1,fp);
@@ -592,24 +602,34 @@ int main(int narg, char **arg)
 
 							fread(buf,sizeof(double),n,fp);
 							tbin_read += clock() - tbin_reads;	
-							
+			
+							for (int s = 0; s<n/size_one; s++) {
+
+								DATA[tmp*3+s*3+0] = buf[4+size_one*s];
+								DATA[tmp*3+s*3+1] = buf[5+size_one*s];
+								DATA[tmp*3+s*3+2] = buf[6+size_one*s];
+
+							};
+		
+							tmp += n/size_one;
+
 							tbin_assigns = clock();
 				  		assignparticle(indexrdf,bin,N,n/size_one,zero_bulk,size_one,variance,sizeY,coord,vel,0);
 							tbin_assign += clock() - tbin_assigns;
 
-//							for (int t = 0; t < n/size_one; t++) {
-//								pts_A.push_back(boost::make_tuple(buf[5+size_one*t],buf[6+size_one*t],0.01,0.01));
-//								pts_A.push_back(boost::make_tuple(1.0,1.0,0.1,0.1));
-//							};
-
+							if (plot) {
+								for (int t = 0; t < n/size_one; t++) {
+									pts_A.push_back(boost::make_tuple(buf[5+size_one*t],buf[6+size_one*t],0.01,0.01));
+								};
+							};
 						}
 
-//						gp << "plot '-' with points\n";
-
-//						gp.send1d(pts_A);	
-//						gp.flush();
-//						pts_A.clear();
-
+						if (plot) {
+							gp << "plot '-' with points\n";
+							gp.send1d(pts_A);	
+							gp.flush();
+							pts_A.clear();
+						};
 							
 
 //						tbin_occups = clock();
@@ -1020,6 +1040,9 @@ int main(int narg, char **arg)
 
 		fprintf(fpdat,"%E ",bin_mean_z[iw]); //mean z-value per bin
 
+//		fprintf(fpdat,"%E %E",Pe[iw],Ke[iw]); //already divided by time_div
+
+
 		fprintf(fpdat,"\n");
 
 	};
@@ -1143,6 +1166,8 @@ int main(int narg, char **arg)
 	if (vacfdat)	delete [] vacfdat;
 	if (filedat) delete [] filedat;
 	if (vardat) delete [] vardat;
+
+	if (DATA) delete [] DATA;
 
 	return 0;
 } // end of main

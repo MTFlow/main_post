@@ -209,6 +209,11 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 									 buf[14+size_one*j] * buf[9+size_one*j] ) * 1.0e5 * 101325.0 * 1.0e-30; 
 
 
+	//Potential energy [J]
+	prop[i*M+30] += ( buf[11+size_one*j] ) * 4184.0 / Na;	
+
+	//Kinetic energy [J]
+	prop[i*M+31] += ( buf[10+size_one*j] ) * 4184.0 / Na;	
 
 
 /*	

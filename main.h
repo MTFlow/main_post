@@ -33,6 +33,8 @@ bigint ntimestep,natoms;
 int size_one,nchunk,triclinic;
 double xlo,xhi,ylo,yhi,zlo,zhi,xy,xz,yz;
 
+double *DATA = NULL;
+
 char *lineS = NULL;
 char *lineD = NULL;
 
@@ -48,7 +50,7 @@ double vmin,vmax,occupation;
 int iV,start,stop,msd,vacf;
 int nstep = 0;
 int N,M,output,step_size,binflag,equalbin;
-int run;
+int run,plot;
 int step = 0;
 double dt;
 int post;
