@@ -17,7 +17,7 @@
 #include <ctime>
 #include <cmath>
 #include <string>
-#include <boost/tuple/tuple.hpp>
+#include <tuple/tuple.hpp>
 #include "gnuplot-iostream.h"
 
 void help() {
@@ -503,6 +503,9 @@ int main(int narg, char **arg)
 	
 		double time_prv = 0.0;
 
+		fregion = fopen("region.txt","w");
+
+
 		if (binflag) {
 
 			int Nnew = 0;
@@ -668,7 +671,8 @@ int main(int narg, char **arg)
 				}; // end of while (1) over time steps
 
 				
-				
+				fclose(fregion);
+	
 				fprintf(screen," | time: %02.0f:%02.0f:%02f",fh(tbin_assign-time_prv),fm(tbin_assign-time_prv),fs(tbin_assign-time_prv));
 
 				time_prv = tbin_assign;

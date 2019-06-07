@@ -57,6 +57,7 @@ int post;
 
 FILE *screen = stdout;  
 FILE *ftemp = NULL;
+FILE *fregion = NULL;
 
 char *filedatgr,*veldat,*msddat,*vacfdat,*filedat,*vardat;
 int *vel = NULL;
