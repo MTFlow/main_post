@@ -17,8 +17,8 @@
 #include <ctime>
 #include <cmath>
 #include <string>
-#include <tuple/tuple.hpp>
-#include "gnuplot-iostream.h"
+//#include <tuple/tuple.hpp>
+//#include "gnuplot-iostream.h"
 
 void help() {
 	printf(
@@ -187,7 +187,7 @@ inline double fs(double sec) {
 int main(int narg, char **arg)
 {
 
-	Gnuplot gp;
+//	Gnuplot gp;
 
 //	fprintf(screen,"Working directory: %s\n");
 
@@ -493,8 +493,8 @@ int main(int narg, char **arg)
 	double value = 1.0;
 		
 	// Gnuplot vectors (i.e. arrows) require four columns: (x,y,dx,dy)
-	std::vector<boost::tuple<double, double, double, double> > pts_A;
-	gp << "set terminal wxt size 1500,900\n";
+//	std::vector<boost::tuple<double, double, double, double> > pts_A;
+//	gp << "set terminal wxt size 1500,900\n";
 
 //==========BIN==========//
 
@@ -621,19 +621,19 @@ int main(int narg, char **arg)
 				  		assignparticle(indexrdf,bin,N,n/size_one,zero_bulk,size_one,variance,sizeY,coord,vel,0);
 							tbin_assign += clock() - tbin_assigns;
 
-							if (plot) {
-								for (int t = 0; t < n/size_one; t++) {
-									pts_A.push_back(boost::make_tuple(buf[5+size_one*t],buf[6+size_one*t],0.01,0.01));
-								};
-							};
+//							if (plot) {
+//								for (int t = 0; t < n/size_one; t++) {
+//									pts_A.push_back(boost::make_tuple(buf[5+size_one*t],buf[6+size_one*t],0.01,0.01));
+//								};
+//							};
 						}
 
-						if (plot) {
-							gp << "plot '-' with points\n";
-							gp.send1d(pts_A);	
-							gp.flush();
-							pts_A.clear();
-						};
+//						if (plot) {
+//							gp << "plot '-' with points\n";
+//							gp.send1d(pts_A);	
+//							gp.flush();
+//							pts_A.clear();
+//						};
 							
 
 //						tbin_occups = clock();
