@@ -44,7 +44,7 @@ int zloflag, zhiflag;
 int boundary[3][2];
 int bin_changed = 0;
 
-int flag_VD,flag_GR,flag_VACF,flag_MSD;
+int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR;
 
 double vmin,vmax,occupation;
 int iV,start,stop,msd,vacf;

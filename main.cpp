@@ -208,10 +208,11 @@ int main(int narg, char **arg)
   zloflag = 0;
 	zhiflag = 0;
 	equalbin = 0;
-	flag_VD = 1;
+	flag_VD = 0;
 	flag_GR = 0;
 	flag_VACF = 0;
 	flag_MSD = 0;
+	flag_VAR = 0;
 	plot = 0;
 
 	lineD = new char[91];
@@ -685,7 +686,7 @@ int main(int narg, char **arg)
 				min_bin = 0.0;
 				for (int p = 0; p < N; p++) {
 					Nocpt[p] = time_div[p]/Nstep;
-					fprintf(screen,"bin: %d - OCC: %f \n",p,Nocpt[p]);
+//					fprintf(screen,"bin: %d - OCC: %f \n",p,Nocpt[p]);
 
 					if (Nocpt[p] < min_occ) {
 						min_occ = Nocpt[p];
@@ -1057,21 +1058,23 @@ int main(int narg, char **arg)
 
 	fprintf(screen,"\n");
 
-	twrite_vars = clock();
-	vardat = new char[l+100];
-	sprintf(vardat,"var_bin_%d.dat",N);
-	if (fexists(vardat)) sprintf(vardat,"var_bin_%d_%02d_%02d_%04d_%02d%02d%02d.dat",N,day,month,year,hour,minute,second);
-	FILE *fpdatvar = fopen(vardat,"w");
+	if (flag_VAR) {
+		twrite_vars = clock();
+		vardat = new char[l+100];
+		sprintf(vardat,"var_bin_%d.dat",N);
+		if (fexists(vardat)) sprintf(vardat,"var_bin_%d_%02d_%02d_%04d_%02d%02d%02d.dat",N,day,month,year,hour,minute,second);
+		FILE *fpdatvar = fopen(vardat,"w");
 
-	for(int idx = 0; idx < sizeY; idx++) {
-		for (int iw = 0; iw < N; iw++) {
-			fprintf(fpdatvar,"%E ",variance[idx+iw*sizeY]);
+		for(int idx = 0; idx < sizeY; idx++) {
+			for (int iw = 0; iw < N; iw++) {
+				fprintf(fpdatvar,"%E ",variance[idx+iw*sizeY]);
+			};
+			fprintf(fpdatvar,"\n");
 		};
-		fprintf(fpdatvar,"\n");
-	};
 
-	fclose(fpdatvar);
-	twrite_var = clock() - twrite_vars;
+		fclose(fpdatvar);
+		twrite_var = clock() - twrite_vars;
+	};
 
 
 //	totaltime = (clock()-starttime)/((double)CLOCKS_PER_SEC);
@@ -1127,8 +1130,8 @@ int main(int narg, char **arg)
 	if (flag_VD) fprintf(screen,"> %s\n",veldat);
 	if (flag_MSD) fprintf(screen,"> %s\n",msddat);
 	if (flag_VACF) fprintf(screen,"> %s\n",vacfdat);
-	fprintf(screen,"> %s\n",filedat);
-	fprintf(screen,"> %s\n\n",vardat);
+	if (flag_VAR) fprintf(screen,"> %s\n",vardat);
+	fprintf(screen,"> %s\n\n",filedat);
 	
 	fprintf(screen,"Total time: %02d:%02d:%f (hr:min:sec)]\n",hours,minutes,seconds);
 	fprintf(screen,"\n");
