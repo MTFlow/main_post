@@ -2,7 +2,6 @@
 #include <string.h>
 #include <iostream>
 #include <sys/stat.h>
-#include "main.h"
 #include "stdlib.h"
 #include "math.h"
 #include <cassert>
@@ -11,7 +10,6 @@
 #include <algorithm>
 #include <list>
 #include <time.h>
-#include "func.h"
 //#include <mpi.h>
 #include <omp.h>
 #include <ctime>
@@ -19,6 +17,10 @@
 #include <string>
 //#include <tuple/tuple.hpp>
 //#include "gnuplot-iostream.h"
+#include "main.h"
+#include "func.h"
+
+
 
 void help() {
 	printf(
@@ -215,6 +217,8 @@ int main(int narg, char **arg)
 	flag_VAR = 0;
 	flag_REGION = 0;
 	plot = 0;
+	dregionLO = 0.0;
+	dregionHI = 0.0;
 
 	lineD = new char[91];
 	strcpy(lineD,"==========================================================================================");
@@ -339,8 +343,8 @@ int main(int narg, char **arg)
 		} else if ( strcmp(arg[iarg],"-region") == 0 ) {
 			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
 			flag_REGION = 1;
-			dregionLO = atof(arg[iarg+1]);
-			dregionHI = atof(arg[iarg+2]);
+			if (arg[iarg+1]!=NULL) dregionLO = atof(arg[iarg+1]);
+			if (arg[iarg+2]!=NULL) dregionHI = atof(arg[iarg+2]);
 			iarg += 1;
 //		} else if ( strcmp(arg[iarg],"-no_ocp") == 0 ) {
 //			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
@@ -426,6 +430,7 @@ int main(int narg, char **arg)
 	if (flag_REGION) fprintf(screen,"%-16s%-25s%f\n","Region lower"," ",dregionLO);
 	if (flag_REGION) fprintf(screen,"%-16s%-25s%f\n","Region higher"," ",dregionHI);
 	fprintf(screen,"%s\n",lineD);
+
 
 	double temp[N][3];
 	double temp1[N][4];
@@ -516,8 +521,8 @@ int main(int narg, char **arg)
 
 		if (flag_REGION) {
 			fnameregion = new char[50];
-			sprintf(fnameregion,"region_%f_%f_%d.dat",dregionLO,dregionHI,N);
-			if (fexists(fnameregion)) sprintf(fnameregion,"region_%f_%f_%d_%02d_%02d_%04d_%02d%02d%02d.dat",dregionLO,dregionHI,N,day,month,year,hour,minute,second);
+			sprintf(fnameregion,"region_%s_%s_%d.dat",dot2underscore(dregionLO,2),dot2underscore(dregionHI,2),N);
+			if (fexists(fnameregion)) sprintf(fnameregion,"region_%s_%s_%d_%02d_%02d_%04d_%02d%02d%02d.dat",dot2underscore(dregionLO,2),dot2underscore(dregionHI,2),N,day,month,year,hour,minute,second);
 			fregion = fopen(fnameregion,"w");
 		};
 
@@ -1145,6 +1150,7 @@ int main(int narg, char **arg)
 	if (flag_MSD) fprintf(screen,"> %s\n",msddat);
 	if (flag_VACF) fprintf(screen,"> %s\n",vacfdat);
 	if (flag_VAR) fprintf(screen,"> %s\n",vardat);
+	if (flag_REGION) fprintf(screen,"> %s\n",fnameregion);
 	fprintf(screen,"> %s\n\n",filedat);
 	
 	fprintf(screen,"Total time: %02d:%02d:%f (hr:min:sec)]\n",hours,minutes,seconds);

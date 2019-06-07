@@ -28,6 +28,14 @@ inline bool fexists (const std::string& name) {
   return (stat (name.c_str(), &buffer) == 0); 
 }
 
+inline char *dot2underscore (double value, int precision) {
+	int d1 = (int) value;
+	int d2 = (int) ((value-d1) * std::pow(10,precision));
+	char *svalue = new char[50];
+	sprintf(svalue,"%d_%d",d1,d2); 
+	return svalue;
+}
+
 int n;
 bigint ntimestep,natoms;
 int size_one,nchunk,triclinic;
