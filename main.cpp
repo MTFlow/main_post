@@ -213,6 +213,7 @@ int main(int narg, char **arg)
 	flag_VACF = 0;
 	flag_MSD = 0;
 	flag_VAR = 0;
+	flag_REGION = 0;
 	plot = 0;
 
 	lineD = new char[91];
@@ -335,6 +336,12 @@ int main(int narg, char **arg)
 		} else if ( strcmp(arg[iarg],"-plot") == 0 ) {
 			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
 			plot = atoi(arg[iarg+1]);
+		} else if ( strcmp(arg[iarg],"-region") == 0 ) {
+			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
+			flag_REGION = 1;
+			dregionLO = atof(arg[iarg+1]);
+			dregionHI = atof(arg[iarg+2]);
+			iarg += 1;
 //		} else if ( strcmp(arg[iarg],"-no_ocp") == 0 ) {
 //			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
 //			char *str = arg[iarg+1];
@@ -416,6 +423,8 @@ int main(int narg, char **arg)
 	fprintf(screen,"%-16s%-25s%f\n","vmax","-vmax",vmax);
 	if (zloflag) fprintf(screen,"%-16s%-25s%f\n","ZLO","-zlo",ZLO);
 	if (zhiflag) fprintf(screen,"%-16s%-25s%f\n","ZHI","-zhi",ZHI);
+	if (flag_REGION) fprintf(screen,"%-16s%-25s%f\n","Region lower"," ",dregionLO);
+	if (flag_REGION) fprintf(screen,"%-16s%-25s%f\n","Region higher"," ",dregionHI);
 	fprintf(screen,"%s\n",lineD);
 
 	double temp[N][3];
@@ -504,8 +513,13 @@ int main(int narg, char **arg)
 	
 		double time_prv = 0.0;
 
-		fregion = fopen("region.txt","w");
 
+		if (flag_REGION) {
+			fnameregion = new char[50];
+			sprintf(fnameregion,"region_%f_%f_%d.dat",dregionLO,dregionHI,N);
+			if (fexists(fnameregion)) sprintf(fnameregion,"region_%f_%f_%d_%02d_%02d_%04d_%02d%02d%02d.dat",dregionLO,dregionHI,N,day,month,year,hour,minute,second);
+			fregion = fopen(fnameregion,"w");
+		};
 
 		if (binflag) {
 
@@ -672,7 +686,7 @@ int main(int narg, char **arg)
 				}; // end of while (1) over time steps
 
 				
-				fclose(fregion);
+				if (flag_REGION) fclose(fregion);
 	
 				fprintf(screen," | time: %02.0f:%02.0f:%02f",fh(tbin_assign-time_prv),fm(tbin_assign-time_prv),fs(tbin_assign-time_prv));
 
@@ -1173,6 +1187,7 @@ int main(int narg, char **arg)
 	if (vacfdat)	delete [] vacfdat;
 	if (filedat) delete [] filedat;
 	if (vardat) delete [] vardat;
+	if (fnameregion) delete [] fnameregion;
 
 	if (DATA) delete [] DATA;
 

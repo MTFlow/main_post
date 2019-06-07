@@ -64,12 +64,12 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 
 		if (i>=N) i = N-1;
 
-
-		if (z_tmp > 25 && z_tmp < 32) {
-			fprintf(fregion,"%E %E %E %E\n",
-				buf[2+size_one*j],buf[4+size_one*j],buf[5+size_one*j],buf[6+size_one*j]);	
+		if(flag_REGION) {
+			if (z_tmp > dregionLO && z_tmp < dregionHI) {
+				fprintf(fregion,"%E %E %E %E\n",
+					buf[2+size_one*j],buf[4+size_one*j],buf[5+size_one*j],buf[6+size_one*j]);	
+			};
 		};
-
 
 
 

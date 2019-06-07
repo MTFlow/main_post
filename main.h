@@ -44,7 +44,9 @@ int zloflag, zhiflag;
 int boundary[3][2];
 int bin_changed = 0;
 
-int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR;
+int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR,flag_REGION;
+
+double dregionLO,dregionHI;
 
 double vmin,vmax,occupation;
 int iV,start,stop,msd,vacf;
@@ -59,7 +61,7 @@ FILE *screen = stdout;
 FILE *ftemp = NULL;
 FILE *fregion = NULL;
 
-char *filedatgr,*veldat,*msddat,*vacfdat,*filedat,*vardat;
+char *filedatgr,*veldat,*msddat,*vacfdat,*filedat,*vardat,*fnameregion;
 int *vel = NULL;
 
 double *variance = NULL;
