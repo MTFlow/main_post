@@ -52,14 +52,14 @@ int zloflag, zhiflag;
 int boundary[3][2];
 int bin_changed = 0;
 
-int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR,flag_REGION;
+int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR,flag_REGION,flag_output_every;
 
 double dregionLO,dregionHI;
 
 double vmin,vmax,occupation;
 int iV,start,stop,msd,vacf;
 int nstep = 0;
-int N,M,output,step_size,binflag,equalbin;
+int N,M,output_every,step_size,binflag,equalbin;
 int run,plot;
 int step = 0;
 double dt;

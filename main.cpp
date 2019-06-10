@@ -28,7 +28,7 @@ void help() {
 		"start(>=0)\t: start at this timestep (-start) (default: %d)\n"
 		"stop(>=0)\t: stop at this timestep (-stop) (default: %d)\n"
 		"N(>0)\t\t: number of bins (-N) (default: %d)\n"
-		"output(>=0)\t: when to print timestep to screen (-output) (default: %d)\n"
+		"output every(>=0)\t: when to print timestep to screen (-output_every) (default: %d)\n"
 		"stepsize(>=0)\t: timestep between data saved in file (-stepsize) (default: %d)\n"
 		"binflag(0|1)\t: find best distribution of bins with minimum occupation per bin (-binflag) (default: %d)\n"
 		"occupation(0:1)\t: occupation per bin (-occupation) (default: %f)\n"
@@ -43,7 +43,7 @@ void help() {
 		"GR(0|1)\t\t: write radial distribution function (-flag_GR) (default: %d)\n"
 		"VACF(0|1)\t: write velocity autocorrelation function (-flag_VACF) (default: %d)\n"
 		"MSD(0|1)\t: write mean square displacement (-flag_MSD) (default: %d)\n\n",
-		start,stop,N,output,step_size,binflag,occupation,iV,vmin,vmax,post,zloflag,zhiflag,equalbin,flag_VD,flag_GR,flag_VACF,flag_MSD );
+		start,stop,N,output_every,step_size,binflag,occupation,iV,vmin,vmax,post,zloflag,zhiflag,equalbin,flag_VD,flag_GR,flag_VACF,flag_MSD );
 };
 
 void input_check(FILE *fp) {
@@ -197,7 +197,7 @@ int main(int narg, char **arg)
 	start = 0;
 	stop = 0;
 	N = 1;
-	output = 2000;
+	output_every = 100;
 	step_size = 500;
 	binflag = 1;
 	occupation = 1.0;
@@ -206,7 +206,7 @@ int main(int narg, char **arg)
 	vmin = -0.01;
 	vmax = 0.01;
 	post = 1;
-	M = 32; //SIZE OF PROP ARRAY;
+	M = 33; //SIZE OF PROP ARRAY;
   zloflag = 0;
 	zhiflag = 0;
 	equalbin = 0;
@@ -216,6 +216,7 @@ int main(int narg, char **arg)
 	flag_MSD = 0;
 	flag_VAR = 0;
 	flag_REGION = 0;
+	flag_output_every = 0;
 	plot = 0;
 	dregionLO = 0.0;
 	dregionHI = 0.0;
@@ -264,15 +265,16 @@ int main(int narg, char **arg)
 			} else {
 				N = (int)Ni;
 			};
-		} else if ( strcmp(arg[iarg],"-output") == 0 ) {
+		} else if ( strcmp(arg[iarg],"-output_every") == 0 ) {
 			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
-			double outputi = atof(arg[iarg+1]);
-			if (outputi!=floor(outputi)) {
-				fprintf(screen,"WARNING: Output value changed to %d!\n",(int)floor(outputi));
- 				output = (int)floor(outputi);
+			double output_everyi = atof(arg[iarg+1]);
+			if (output_everyi!=floor(output_everyi)) {
+				fprintf(screen,"WARNING: Output value changed to %d!\n",(int)floor(output_everyi));
+ 				output_every = (int)floor(output_everyi);
 			} else {
-				output = (int)outputi;
+				output_every = (int)output_everyi;
 			};
+			flag_output_every = 1;
 		} else if ( strcmp(arg[iarg],"-stepsize") == 0 ) {
 			if (iarg+2 > narg) {fprintf(screen,"Missing argument value of '%s'\n",arg[iarg]); return 1;}
 			double step_sizei = atof(arg[iarg+1]);
@@ -383,8 +385,8 @@ int main(int narg, char **arg)
 	DATA = new double[natoms*3];
 
 
-	msd = 1;
-	vacf = 1;
+//	msd = 1;
+//	vacf = 1;
 
 	clock_t tinits,ttotals;
 	clock_t tbins,tbin_reads,tbin_assigns,tbin_occups,tbin_props,tbin_bins;
@@ -406,10 +408,11 @@ int main(int narg, char **arg)
 //====INIT====//
 	tinits = clock();
 
-	int output_every = step_size * output;
 	double coord[7] = {50.0, 50.0, 10.0, 10.0, 40.0, 15.0, 60.0}; //x,y,z,dxyz,Ra,Rrho,Nshells
 
 	double Nstep = ((stop-start)/step_size) + 1;
+
+	if (!flag_output_every) output_every = (int)((stop-start)/10.0);
 
 	fprintf(screen,"\n%s\n",lineD);
 	fprintf(screen,"INPUT");
@@ -419,7 +422,7 @@ int main(int narg, char **arg)
 	fprintf(screen,"%-16s%-25s%d\n","Stop","-stop",stop);
 	fprintf(screen,"%-16s%-25s%d\n","Nbins","-N",N);
 	fprintf(screen,"%-16s%-25s%d\n","Binflag","-binflag",binflag);
-	fprintf(screen,"%-16s%-25s%d\n","Output","-output",output);
+	fprintf(screen,"%-16s%-25s%d\n","Output every","-output_every",output_every);
 	fprintf(screen,"%-16s%-25s%d\n","Step size","-stepsize",step_size);
 	fprintf(screen,"%-16s%-25s%f\n","Timestep","-dt",dt);
 	fprintf(screen,"%-16s%-25s%d\n","iV","-iV",iV);
@@ -442,7 +445,7 @@ int main(int narg, char **arg)
 	double P[N];
 //	double zero_bulk[N][3];
 	double Pe[N];
-//	double enthlp[N];
+	double enthlp[N];
 
 	double eflux[N][3];
 	double eflux1[N][3];
@@ -490,7 +493,7 @@ int main(int narg, char **arg)
 		eflux[ii][0]=0.0; eflux[ii][1]=0.0; eflux[ii][2]=0.0;
 		eflux1[ii][0]=0.0; eflux1[ii][1]=0.0; eflux1[ii][2]=0.0;
 		Pe[ii]=0.0;
-		//enthlp[ii]=0.0;
+		enthlp[ii]=0.0;
 
 		for (int jj = 0; jj < sizeY; jj ++) {
 			varT[ii*sizeY+jj] = 0.0;
@@ -892,8 +895,8 @@ int main(int narg, char **arg)
 //=========end VACF=========//
 
 
-		msd = 0;
-		vacf = 0;
+//		msd = 0;
+//		vacf = 0;
 
 		trun1s = clock();
 
@@ -978,7 +981,7 @@ int main(int narg, char **arg)
 					temperature(l,temp,varT,varT_orth,varT_paral,sizeY);		
 					pressure(l,press,bin_vol);
 					heatflux(l,hflux,bin_vol);
-//					enthalpy(l,enthlp,bin_vol);
+					enthalpy(l,enthlp,bin_vol);
 					energyflux1(l,eflux1,bin_vol,bulk_vel,hflux,press,Nstep);
 					energyflux(l,eflux,bin_vol);
 				}
@@ -1021,7 +1024,7 @@ int main(int narg, char **arg)
 	if (fexists(filedat)) sprintf(filedat,"output_bin_%d_%02d_%02d_%04d_%02d%02d%02d.dat",N,day,month,year,hour,minute,second);
 	FILE *fpdat = fopen(filedat,"w");
 
-	fprintf(fpdat,"z[m] density[#/m3] Ux[m/s] Uy[m/s] Uz[m/s] T[K] T_orth[K] T_paral[K] P[N/m2] Pxx[N/m2] Pyy[N/m2] Pzz[N/m2] Pxy[N/m2] Pxz[N/m2] Pyz[N/m2] Jx[W/m2] Jy[W/m2] Jz[W/m2] Ex[W/m2] Ey[W/m2] Ez[W/m2] Ex1 Ey1 Ez1 Pe[J] Occupation VarT varT_orth varT_paral\n");
+	fprintf(fpdat,"z[m] density[#/m3] Ux[m/s] Uy[m/s] Uz[m/s] T[K] T_orth[K] T_paral[K] P[N/m2] Pxx[N/m2] Pyy[N/m2] Pzz[N/m2] Pxy[N/m2] Pxz[N/m2] Pyz[N/m2] Jx[W/m2] Jy[W/m2] Jz[W/m2] Ex[W/m2] Ey[W/m2] Ez[W/m2] Ex1 Ey1 Ez1 Pe[J] Enthalpy[J/kg] Occupation VarT varT_orth varT_paral\n");
 
 	double NvarT;
 	double NvarT_orth;
@@ -1045,7 +1048,7 @@ int main(int narg, char **arg)
 		fprintf(fpdat,"%E %E %E ",
 						eflux1[iw][0]/Nstep,eflux1[iw][1]/Nstep,eflux1[iw][2]/Nstep);
 		fprintf(fpdat,"%E ",Pe[iw]); //already divided by time_div
-//		fprintf(fpdat,"%E ",enthlp[iw]/Nstep);
+		fprintf(fpdat,"%E ",enthlp[iw]/Nstep);
 		fprintf(fpdat,"%E ",time_div[iw]/Nstep); //fraction of total steps in which there is an atom in the bin
 
 

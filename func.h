@@ -130,7 +130,7 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 
 	// Molar mass [kg]
 	m  = buf[size_one*j] / (Na * 1000.0);
-//	prop[i][29] = buf[size_one*j]/(1000.0 * Na);
+	prop[i*M+32] = m; 
 
 	// Peculiar velocity [m/s]
 	vx = ( buf[7+size_one*j] - ibulk_vel[i*3] * 1.0e-5 ) * 1e5;
@@ -434,13 +434,15 @@ void energyflux(int N, double ieflux[][3], double *ibin_vol)
 //==============Enthalpy[J/kg]========================
 void enthalpy(int N, double *ienthlp, double *ibin_vol)
 {
-	double m = prop[N*M+29];
+	double m = prop[N*M+32];
 	double Nj;
 	if (prop[N*M] < 3.0) {Nj = 1.0;}
-	else {Nj = prop[N*M];}
+	else {Nj = prop[N*M] / 3.0;}
 
-	ienthlp[N] = (3.0/Nj) * ( (5.0/6.0) * (prop[N*M+21]) + 
-																			(1/m) * ( prop[N*M+20] + (1.0/3.0) * prop[N*M+22] ) );
+	ienthlp[N] = (1.0/Nj) * ( 
+									(5.0/6.0) * (prop[N*M+21]) + 
+									(1/m) * ( prop[N*M+20] + (1.0/3.0) * prop[N*M+22] ) 
+								);
 }
 
 
@@ -471,7 +473,7 @@ void velocity_dist()
 }
 */
 
-//==============Bulk velocity[m/s]========================
+//==============Mean z-position per bin[m]========================
 void mean_z(int N, double *bin_mean_z)
 {
 	double Vdiv;
