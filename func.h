@@ -1,5 +1,5 @@
 //============================================================================
-//TODO: enthalpy, surface tension, green-kubo relations,velocity distr
+//TODO: surface tension, green-kubo relations,velocity distr
 //============================================================================
 
 //=============Chunk Domain=================
@@ -19,7 +19,7 @@ int chunkdomain(double *bin, int nz)
 }
 
 //=============AssignParticle=================
-void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel,int size_one, double *ivar, int sizeY, double *coord, int *vel, int J)
+void assignparticle(int *indexrdf, double *bin, int Ni, int nat,double *ibulk_vel,int size_one, double *ivar, int sizeY, double *coord, int *vel, int J)
 {
 	double m 			= 0.0;
 	double vx 		= 0.0;
@@ -49,11 +49,11 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 		double z_tmp = buf[6+size_one*j];
 		
 		if (equalbin) {
-			 double p = floor((z_tmp-ZLO)*N/(ZHI-ZLO));
+			 double p = floor((z_tmp-ZLO)*Ni/(ZHI-ZLO));
 				i = (int)sqrt(p*p);
 //			 printf("i: %d\n",i);
 		} else {
-			for (int ii = 0; ii < N; ii++){
+			for (int ii = 0; ii < Ni; ii++){
 				if (z_tmp < bin[ii+1]) {
 					i = ii;
 					break;
@@ -62,7 +62,7 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 			};
 		};
 
-		if (i>=N) i = N-1;
+		if (i>=Ni) i = Ni-1;
 
 		if(flag_REGION) {
 			if (z_tmp > dregionLO && z_tmp < dregionHI) {
@@ -74,8 +74,8 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 
 
 //		int i = 0;	
-//		while (buf[6+size_one*j] >= bin[i] && buf[6+size_one*j] >= bin[i+1] && i < N) i++;
-//		if (i == N) i = N - 1;
+//		while (buf[6+size_one*j] >= bin[i] && buf[6+size_one*j] >= bin[i+1] && i < Ni) i++;
+//		if (i == Ni) i = Ni - 1;
 //		if (i == 0) {
 //			if (buf[6+size_one*j] < bin[0]) i = 0;
 //		};
