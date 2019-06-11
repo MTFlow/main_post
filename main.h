@@ -43,6 +43,8 @@ double xlo,xhi,ylo,yhi,zlo,zhi,xy,xz,yz;
 
 double *DATA = NULL;
 
+double mass;
+
 char *lineS = NULL;
 char *lineD = NULL;
 

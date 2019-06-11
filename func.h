@@ -130,7 +130,7 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 
 	// Molar mass [kg]
 	m  = buf[size_one*j] / (Na * 1000.0);
-	prop[i*M+32] = m; 
+//	prop[i*M+32] = m; 
 
 	// Peculiar velocity [m/s]
 	vx = ( buf[7+size_one*j] - ibulk_vel[i*3] * 1.0e-5 ) * 1e5;
@@ -293,7 +293,7 @@ void assignparticle(int *indexrdf, double *bin, int N, int nat,double *ibulk_vel
 
 
 //===============MSD=======================
-void MSD(int l, int N) 
+void MSD(int l, int Ni) 
 {
 		double nmsd;
 		if (prop[l*M] < 3.0) {
@@ -301,14 +301,14 @@ void MSD(int l, int N)
 		} else {
 			nmsd = prop[l*M] / 3.0;
 		}
-		vector_msd[0+l*4+nstep*4*N] /= nmsd;
-		vector_msd[1+l*4+nstep*4*N] /= nmsd;
-		vector_msd[2+l*4+nstep*4*N] /= nmsd;
-		vector_msd[3+l*4+nstep*4*N] /= nmsd;
+		vector_msd[0+l*4+nstep*4*Ni] /= nmsd;
+		vector_msd[1+l*4+nstep*4*Ni] /= nmsd;
+		vector_msd[2+l*4+nstep*4*Ni] /= nmsd;
+		vector_msd[3+l*4+nstep*4*Ni] /= nmsd;
 }
 
 //===============VACF=======================
-void VACF(int l, int N) 
+void VACF(int l, int Ni) 
 {
 		double nvacf;
 		if (prop[l*M] < 3.0) {
@@ -316,62 +316,62 @@ void VACF(int l, int N)
 		} else {
 			nvacf = prop[l*M] / 3.0;
 		}
-		vector_vacf[0+l*4+nstep*4*N] /= nvacf;
-		vector_vacf[1+l*4+nstep*4*N] /= nvacf;
-		vector_vacf[2+l*4+nstep*4*N] /= nvacf;
-		vector_vacf[3+l*4+nstep*4*N] /= nvacf;
+		vector_vacf[0+l*4+nstep*4*Ni] /= nvacf;
+		vector_vacf[1+l*4+nstep*4*Ni] /= nvacf;
+		vector_vacf[2+l*4+nstep*4*Ni] /= nvacf;
+		vector_vacf[3+l*4+nstep*4*Ni] /= nvacf;
 
 }
 
 //===============timediv=======================
-void timediv(int N, double *itime_div)
+void timediv(int Ni, double *itime_div)
 {
-	if (prop[N*M] > 1.0) itime_div[N] += 1.0;
+	if (prop[Ni*M] > 1.0) itime_div[Ni] += 1.0;
 }
 
 //===============Temperature[K]====================
-void temperature(int N, double itemp[][3], double *ivarT, double *ivarT_orth, double *ivarT_paral, int sizeY)
+void temperature(int Ni, double itemp[][3], double *ivarT, double *ivarT_orth, double *ivarT_paral, int sizeY)
 {
 	double div,div_orth,div_paral;
-	if (prop[N*M] < 3.0) {
+	if (prop[Ni*M] < 3.0) {
 		div = 1.0; // dividing by zero
 		div_orth = 1.0;
 		div_paral = 1.0;	
 	} else {
-		div = prop[N*M];
-		div_orth = 2.0 * prop[N*M] / 3.0;
-		div_paral = prop[N*M] / 3.0;
+		div = prop[Ni*M];
+		div_orth = 2.0 * prop[Ni*M] / 3.0;
+		div_paral = prop[Ni*M] / 3.0;
 	};
-	itemp[N][0] += prop[N*M+1] / ( kb * div );
- 	itemp[N][1] += prop[N*M+2] / ( kb * div_orth ); 
-	itemp[N][2] += prop[N*M+3] / ( kb * div_paral );	
+	itemp[Ni][0] += prop[Ni*M+1] / ( kb * div );
+ 	itemp[Ni][1] += prop[Ni*M+2] / ( kb * div_orth ); 
+	itemp[Ni][2] += prop[Ni*M+3] / ( kb * div_paral );	
 
 
 //	fprintf(ftemp,"%E %E %E %E\n",bin_w[N],prop[N*M+1] / ( kb * div ),prop[N*M+2] / ( kb * div_orth ), prop[N*M+3] / ( kb * div_paral )); 
-	fprintf(ftemp,"%E %E %E\n",prop[N*M+1] / ( kb * div ),prop[N*M+2] / ( kb * div_orth ), prop[N*M+3] / ( kb * div_paral )); 
+	fprintf(ftemp,"%E %E %E\n",prop[Ni*M+1] / ( kb * div ),prop[Ni*M+2] / ( kb * div_orth ), prop[Ni*M+3] / ( kb * div_paral )); 
 
 
 
-	double indexv = ivarT[N*sizeY];
-	ivarT[N*sizeY+(int)indexv+1] = prop[N*M+1] / ( kb * div );
-	ivarT[N*sizeY] += 1.0;	
+	double indexv = ivarT[Ni*sizeY];
+	ivarT[Ni*sizeY+(int)indexv+1] = prop[Ni*M+1] / ( kb * div );
+	ivarT[Ni*sizeY] += 1.0;	
 
-	double indexv1 = ivarT_orth[N*sizeY];
-	ivarT_orth[N*sizeY+(int)indexv1+1] = prop[N*M+2] / ( kb * div_orth );
-	ivarT_orth[N*sizeY] += 1.0;	
+	double indexv1 = ivarT_orth[Ni*sizeY];
+	ivarT_orth[Ni*sizeY+(int)indexv1+1] = prop[Ni*M+2] / ( kb * div_orth );
+	ivarT_orth[Ni*sizeY] += 1.0;	
 
-	double indexv2 = ivarT_paral[N*sizeY];
-	ivarT_paral[N*sizeY+(int)indexv2+1] = prop[N*M+3] / ( kb * div_paral );
-	ivarT_paral[N*sizeY] += 1.0;	
+	double indexv2 = ivarT_paral[Ni*sizeY];
+	ivarT_paral[Ni*sizeY+(int)indexv2+1] = prop[Ni*M+3] / ( kb * div_paral );
+	ivarT_paral[Ni*sizeY] += 1.0;	
 
 
 }
 
 //================Number density[#/m3]================
-void density(int N, double *den, double *ivar, int sizeY)
+void density(int Ni, double *den, double *ivar, int sizeY)
 {
 //	den[N] += prop[N*M] / (3.0 * ibin_vol[N]);
-	den[N] += prop[N*M] / (3.0);
+	den[Ni] += prop[Ni*M] / (3.0);
 
 
 //	double indexv = ivar[N*sizeY];
@@ -381,67 +381,70 @@ void density(int N, double *den, double *ivar, int sizeY)
 }
 
 //================Potential energy[J]================
-void pe_energy(int N, double *Pe)
+void pe_energy(int Ni, double *Pe)
 {
-	Pe[N] += prop[N*M+20];	
+	Pe[Ni] += prop[Ni*M+20];	
 }
 
 //===============Pressure[N/m2]=======================
-void pressure(int N, double ipress[][6], double *ibin_vol)
+void pressure(int Ni, double ipress[][6], double *ibin_vol)
 {
 	for (int j = 0; j < 6; j++) {
 		// pxx pyy pzz pxy pxz pyz
-		ipress[N][j] += -1 * prop[N*M+j+4] / ibin_vol[N];
+		ipress[Ni][j] += -1 * prop[Ni*M+j+4] / ibin_vol[Ni];
 	}
 }
 
 //===============Heat flux[W/m2]=========================
-void heatflux(int N, double ihflux[][3], double *ibin_vol)
+void heatflux(int Ni, double ihflux[][3], double *ibin_vol)
 {
-	ihflux[N][0] += ( prop[N*M+10] - prop[N*M+13] ) / ibin_vol[N]; 
-	ihflux[N][1] += ( prop[N*M+11] - prop[N*M+14] ) / ibin_vol[N];
-	ihflux[N][2] += ( prop[N*M+12] - prop[N*M+15] ) / ibin_vol[N];
+	ihflux[Ni][0] += ( prop[Ni*M+10] - prop[Ni*M+13] ) / ibin_vol[Ni]; 
+	ihflux[Ni][1] += ( prop[Ni*M+11] - prop[Ni*M+14] ) / ibin_vol[Ni];
+	ihflux[Ni][2] += ( prop[Ni*M+12] - prop[Ni*M+15] ) / ibin_vol[Ni];
 }
 
 //===============Energy flux[W/m2]=========================
-void energyflux1(int N, double ieflux[][3], double *ibin_vol, double *bulk_vel, double ihflux[][3], double ipress[][6], double itime_div) 
+void energyflux1(int Ni, double ieflux[][3], double *ibin_vol, double *bulk_vel, double ihflux[][3], double ipress[][6], double itime_div) 
 {
-	ieflux[N][0] += (	prop[N*M+19] / ibin_vol[N]) * bulk_vel[N*3] + 
-										ihflux[N][0] + 
-										( ipress[N][0] ) * bulk_vel[N*3] +
-										( ipress[N][3] ) * bulk_vel[N*3+1] + 
-										( ipress[N][4] ) * bulk_vel[N*3+2];
-	ieflux[N][1] += (	prop[N*M+19] / ibin_vol[N]) * bulk_vel[N*3+1] + 
-										ihflux[N][1] + 
-										( ipress[N][3] ) * bulk_vel[N*3] +
-										( ipress[N][1] ) * bulk_vel[N*3+1] + 
-										( ipress[N][5] ) * bulk_vel[N*3+2];
-	ieflux[N][2] += (	prop[N*M+19] / ibin_vol[N]) * bulk_vel[N*3+2] + 
-										ihflux[N][2] + 
-										( ipress[N][4] ) * bulk_vel[N*3] +
-										( ipress[N][5] ) * bulk_vel[N*3+1] + 
-										( ipress[N][2] ) * bulk_vel[N*3+2]; 
+	ieflux[Ni][0] += (	prop[Ni*M+19] / ibin_vol[Ni]) * bulk_vel[Ni*3] + 
+										ihflux[Ni][0] + 
+										( ipress[Ni][0] ) * bulk_vel[Ni*3] +
+										( ipress[Ni][3] ) * bulk_vel[Ni*3+1] + 
+										( ipress[Ni][4] ) * bulk_vel[Ni*3+2];
+	ieflux[Ni][1] += (	prop[Ni*M+19] / ibin_vol[Ni]) * bulk_vel[Ni*3+1] + 
+										ihflux[Ni][1] + 
+										( ipress[Ni][3] ) * bulk_vel[Ni*3] +
+										( ipress[Ni][1] ) * bulk_vel[Ni*3+1] + 
+										( ipress[Ni][5] ) * bulk_vel[Ni*3+2];
+	ieflux[Ni][2] += (	prop[Ni*M+19] / ibin_vol[Ni]) * bulk_vel[Ni*3+2] + 
+										ihflux[Ni][2] + 
+										( ipress[Ni][4] ) * bulk_vel[Ni*3] +
+										( ipress[Ni][5] ) * bulk_vel[Ni*3+1] + 
+										( ipress[Ni][2] ) * bulk_vel[Ni*3+2]; 
 }
 
 //===============Energy flux[W/m2]=========================
-void energyflux(int N, double ieflux[][3], double *ibin_vol) 
+void energyflux(int Ni, double ieflux[][3], double *ibin_vol) 
 {
-	ieflux[N][0] += ( prop[N*M+23] - prop[N*M+26] ) / ibin_vol[N]; 
-	ieflux[N][1] += ( prop[N*M+24] - prop[N*M+27] ) / ibin_vol[N];
-	ieflux[N][2] += ( prop[N*M+25] - prop[N*M+28] ) / ibin_vol[N];
+	ieflux[Ni][0] += ( prop[Ni*M+23] - prop[Ni*M+26] ) / ibin_vol[Ni]; 
+	ieflux[Ni][1] += ( prop[Ni*M+24] - prop[Ni*M+27] ) / ibin_vol[Ni];
+	ieflux[Ni][2] += ( prop[Ni*M+25] - prop[Ni*M+28] ) / ibin_vol[Ni];
 }
 
 //==============Enthalpy[J/kg]========================
-void enthalpy(int N, double *ienthlp, double *ibin_vol)
+void enthalpy(int Ni, double *ienthlp)
 {
-	double m = prop[N*M+32];
+//	double m = prop[N*M+32];
 	double Nj;
-	if (prop[N*M] < 3.0) {Nj = 1.0;}
-	else {Nj = prop[N*M] / 3.0;}
+	if (prop[Ni*M] < 3.0) {
+		Nj = 1.0;
+	} else {
+		Nj = prop[Ni*M] / 3.0;
+	};
 
-	ienthlp[N] = (1.0/Nj) * ( 
-									(5.0/6.0) * (prop[N*M+21]) + 
-									(1/m) * ( prop[N*M+20] + (1.0/3.0) * prop[N*M+22] ) 
+	ienthlp[Ni] += (1.0 / Nj) * ( 
+									(5.0 / 6.0) * prop[Ni*M+21] + 
+									(1.0 / mass) * ( prop[Ni*M+20] + (1.0 / 3.0) * prop[Ni*M+22] ) 
 								);
 }
 
@@ -474,29 +477,29 @@ void velocity_dist()
 */
 
 //==============Mean z-position per bin[m]========================
-void mean_z(int N, double *bin_mean_z)
+void mean_z(int Ni, double *bin_mean_z)
 {
 	double Vdiv;
-	if (prop[N*M] < 3.0) {
+	if (prop[Ni*M] < 3.0) {
 		Vdiv = 1.0;
 	} else {
-		Vdiv = prop[N*M] / 3.0;
+		Vdiv = prop[Ni*M] / 3.0;
 	};
-	bin_mean_z[N] += prop[N*M+29] / Vdiv;
+	bin_mean_z[Ni] += prop[Ni*M+29] / Vdiv;
 }
 
 //==============Bulk velocity[m/s]========================
-void bulk_velocity(int N, double *bulk_vel)
+void bulk_velocity(int Ni, double *bulk_vel)
 {
 	double Vdiv;
-	if (prop[N*M] < 3.0) {
+	if (prop[Ni*M] < 3.0) {
 		Vdiv = 1.0;
 	} else {
-		Vdiv = prop[N*M] / 3.0;
+		Vdiv = prop[Ni*M] / 3.0;
 	};
-	bulk_vel[N*3] += prop[N*M+16] / Vdiv;
-	bulk_vel[N*3+1] += prop[N*M+17] / Vdiv;
-	bulk_vel[N*3+2] += prop[N*M+18] / Vdiv;
+	bulk_vel[Ni*3] += prop[Ni*M+16] / Vdiv;
+	bulk_vel[Ni*3+1] += prop[Ni*M+17] / Vdiv;
+	bulk_vel[Ni*3+2] += prop[Ni*M+18] / Vdiv;
 }
 
 /*
@@ -564,6 +567,7 @@ void bulk_velocity_test(int N, double iprop[][22], double ibulk_vel[][3], double
 }
 */
 
+/*
 //==============Radial Distribution Function==============
 void rdf(int n, double *buf, double *gr, double *coord, double *Nra, int size_one, int *index)
 {
@@ -579,7 +583,7 @@ void rdf(int n, double *buf, double *gr, double *coord, double *Nra, int size_on
 //	printf("\n\nRadial distribution function");
 //	printf("\n===================================================");			
 
-/*
+
 	for (int j = 0; j < n; j++) {
 //		if (jj > 9) break;
 		if (buf[4+size_one*j] >= coord[0] && buf[4+size_one*j] <= coord[0]+coord[3] &&
@@ -590,7 +594,6 @@ void rdf(int n, double *buf, double *gr, double *coord, double *Nra, int size_on
 				jj += 1;
 		};
 	}
-*/
 
 	if (index[0]==-1) {
 		printf("\nNo atom selected with dxyz:%f",coord[3]);	
@@ -640,4 +643,4 @@ void rdf(int n, double *buf, double *gr, double *coord, double *Nra, int size_on
 	
 }
 
-
+*/
