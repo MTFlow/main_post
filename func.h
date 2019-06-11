@@ -202,7 +202,7 @@ void assignparticle(int *indexrdf, double *bin, int Ni, int nat,double *ibulk_ve
 	prop[i*M+21] += vx * vx + vy * vy + vz * vz;
 
 	// For enthalpy [J]
-	prop[i*M+22] += ( buf[12+size_one*j] + buf[13+size_one*j] + buf[14+size_one*j]) * 101325.0 * 1e-30;	
+	prop[i*M+22] += -1 * ( buf[12+size_one*j] + buf[13+size_one*j] + buf[14+size_one*j]) * 101325.0 * 1e-30;	
 
 	// Convective part heat flux, NOT divided by volume yet [Wm]
 	prop[i*M+23] += ( Kea + (buf[11+size_one*j]*4184/Na) ) * buf[7+size_one*j] * 1.0e5;	
