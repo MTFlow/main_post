@@ -36,6 +36,21 @@ inline char *dot2underscore (double value, int precision) {
 	return svalue;
 }
 
+int chunkdomain(double*,int);
+void assignparticle(int*,double*,int,int,double*,int,double*,int,double*,int*,int);
+void MSD(int,int);
+void VACF(int,int);
+void timediv(int,double*);
+void temperature(int,double[][3],double*,double*,double*,int);
+void density(int,double*,double*,int);
+void pe_energy(int,double*);
+void pressure(int,double[][6],double*);
+void heatflux(int,double[][3],double*);
+void energyflux(int,double[][3],double*,double*,double[][3],double[][6],double);
+void enthalpy(int,double*);
+void mean_z(int,double*);
+void bulk_velocity(int,double*);
+
 int n;
 bigint ntimestep,natoms;
 int size_one,nchunk,triclinic;
@@ -43,78 +58,80 @@ double xlo,xhi,ylo,yhi,zlo,zhi,xy,xz,yz;
 
 double *DATA = NULL;
 
-double mass;
+//double mass;
 
 char *lineS = NULL;
 char *lineD = NULL;
 
-double ZLO,ZHI;
+//double ZLO,ZHI;
 int zloflag, zhiflag;
 
 int boundary[3][2];
 int bin_changed = 0;
 
-int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR,flag_REGION,flag_output_every;
+int flag_VD,flag_GR,flag_VACF,flag_MSD,flag_VAR,flag_output_every;
 
-double dregionLO,dregionHI;
+//double dregionLO,dregionHI;
 
-double vmin,vmax,occupation;
-int iV,start,stop,msd,vacf;
-int nstep = 0;
-int N,M,output_every,step_size,binflag,equalbin;
+//double vmin,vmax,occupation;
+//int iV,equalbin,flag_REGION,M;
+
+int start,stop,msd,vacf;
+//int nstep = 0;
+int N,output_every,step_size,binflag;
 int run,plot;
 int step = 0;
 double dt;
 int post;
 
 FILE *screen = stdout;  
-FILE *ftemp = NULL;
-FILE *fregion = NULL;
+//FILE *ftemp = NULL;
+//FILE *fregion = NULL;
 
 char *filedatgr,*veldat,*msddat,*vacfdat,*filedat,*vardat,*fnameregion;
-int *vel = NULL;
+//int *vel = NULL;
 
 double *variance = NULL;
-double *vector_msd = NULL;
-double *vector_vacf = NULL;
+//double *vector_msd = NULL;
+//double *vector_vacf = NULL;
 double *xoriginal = NULL;
 double *voriginal = NULL;
 
-double *varT = NULL;
-double *varT_orth = NULL;
-double *varT_paral = NULL;
+//double *varT = NULL;
+//double *varT_orth = NULL;
+//double *varT_paral = NULL;
 
 double *varT1 = NULL;
 double *varT_orth1 = NULL;
 double *varT_paral1 = NULL;
 
-double *prop = NULL;
+//double *prop = NULL;
 double *prop_U = NULL;
 
 clock_t tbins2;
 double tbin2=0.0;
 
-double *bin = NULL;
+//double *bin = NULL;
 double *Nocpt = NULL;
 double *Nsize = NULL;
 double *time_div = NULL;
-double *den = NULL;	
-double *bulk_vel = NULL;
+//double *den = NULL;	
+//double *bulk_vel = NULL;
 double *zero_bulk = NULL;
 
 double *bin_w = NULL;
-double *bin_vol = NULL;
-double *bin_mean_z = NULL;
+//double *bin_vol = NULL;
+//double *bin_mean_z = NULL;
 
 int maxbuf = 0;
-double *buf = NULL;
-//double *Tbuf = NULL;
-//double *tmp = NULL;
-//double *buf1 = NULL;
+//double *buf = NULL;
+double *Tbuf = NULL;
+double *tmp = NULL;
+double *buf1 = NULL;
 
-const double Na = 6.02214086e23; // 1/mol
-const double kb = 1.38064852e-23; // J/K
-const double R = Na * kb;
-const double pi = 3.141592653589793;
+//const double Na = 6.02214086e23; // 1/mol
+//const double kb = 1.38064852e-23; // J/K
+//const double R = Na * kb;
+//const double pi = 3.141592653589793;
 
 

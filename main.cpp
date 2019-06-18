@@ -449,8 +449,7 @@ int main(int narg, char **arg)
 	double Pe[N];
 	double enthlp[N];
 
-//	double eflux[N][3];
-	double eflux1[N][3];
+	double eflux[N][3];
 
 	double gr[(int)coord[6]];
 	double Nra[(int)coord[6]];
@@ -492,8 +491,7 @@ int main(int narg, char **arg)
 		bulk_vel[ii*3]=0.0; bulk_vel[ii*3+1]=0.0; bulk_vel[ii*3+2]=0.0;
 		P[ii]=0.0;
 		zero_bulk[ii*3]=0.0;zero_bulk[ii*3+1]=0.0;zero_bulk[ii*3+2]=0.0;
-//		eflux[ii][0]=0.0; eflux[ii][1]=0.0; eflux[ii][2]=0.0;
-		eflux1[ii][0]=0.0; eflux1[ii][1]=0.0; eflux1[ii][2]=0.0;
+		eflux[ii][0]=0.0; eflux[ii][1]=0.0; eflux[ii][2]=0.0;
 		Pe[ii]=0.0;
 		enthlp[ii]=0.0;
 
@@ -984,8 +982,7 @@ int main(int narg, char **arg)
 					pressure(l,press,bin_vol);
 					heatflux(l,hflux,bin_vol);
 					enthalpy(l,enthlp);
-					energyflux1(l,eflux1,bin_vol,bulk_vel,hflux,press,Nstep);
-//					energyflux(l,eflux,bin_vol);
+					energyflux(l,eflux,bin_vol,bulk_vel,hflux,press,Nstep);
 				}
 				trun1_prop += clock() - trun1_props;
 
@@ -1045,10 +1042,8 @@ int main(int narg, char **arg)
 						press[iw][3]/Nstep,press[iw][4]/Nstep,press[iw][5]/Nstep);
 		fprintf(fpdat,"%E %E %E ",
 						hflux[iw][0]/Nstep,hflux[iw][1]/Nstep,hflux[iw][2]/Nstep);
-//		fprintf(fpdat,"%E %E %E ",
-//						eflux[iw][0]/Nstep,eflux[iw][1]/Nstep,eflux[iw][2]/Nstep);
 		fprintf(fpdat,"%E %E %E ",
-						eflux1[iw][0]/Nstep,eflux1[iw][1]/Nstep,eflux1[iw][2]/Nstep);
+						eflux[iw][0]/Nstep,eflux[iw][1]/Nstep,eflux[iw][2]/Nstep);
 		fprintf(fpdat,"%E ",Pe[iw]); //already divided by time_div
 		fprintf(fpdat,"%E ",enthlp[iw]/Nstep);
 		fprintf(fpdat,"%E ",time_div[iw]/Nstep); //fraction of total steps in which there is an atom in the bin
