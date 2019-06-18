@@ -1,4 +1,4 @@
 # main_post
 
-Macroscopic properties <br/>
+Macroscopic properties  
 TEST
