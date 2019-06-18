@@ -20,7 +20,7 @@
 #include "main.h"
 #include "func.h"
 
-
+//TEST
 
 void help() {
 	printf(
