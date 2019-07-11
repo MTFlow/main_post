@@ -404,7 +404,7 @@ void heatflux(int Ni, double ihflux[][3], double *ibin_vol)
 }
 
 //===============Energy flux[W/m2]=========================
-void energyflux1(int Ni, double ieflux[][3], double *ibin_vol, double *bulk_vel, double ihflux[][3], double ipress[][6], double itime_div) 
+void energyflux(int Ni, double ieflux[][3], double *ibin_vol, double *bulk_vel, double ihflux[][3], double ipress[][6], double itime_div) 
 {
 	ieflux[Ni][0] += (	prop[Ni*M+19] / ibin_vol[Ni]) * bulk_vel[Ni*3] + 
 										ihflux[Ni][0] + 
@@ -423,13 +423,6 @@ void energyflux1(int Ni, double ieflux[][3], double *ibin_vol, double *bulk_vel,
 										( ipress[Ni][2] ) * bulk_vel[Ni*3+2]; 
 }
 
-//===============Energy flux[W/m2]=========================
-void energyflux(int Ni, double ieflux[][3], double *ibin_vol) 
-{
-	ieflux[Ni][0] += ( prop[Ni*M+23] - prop[Ni*M+26] ) / ibin_vol[Ni]; 
-	ieflux[Ni][1] += ( prop[Ni*M+24] - prop[Ni*M+27] ) / ibin_vol[Ni];
-	ieflux[Ni][2] += ( prop[Ni*M+25] - prop[Ni*M+28] ) / ibin_vol[Ni];
-}
 
 //==============Enthalpy[J/kg]========================
 void enthalpy(int Ni, double *ienthlp)
