@@ -1026,7 +1026,7 @@ int main(int narg, char **arg)
 	if (fexists(filedat)) sprintf(filedat,"output_bin_%d_%02d_%02d_%04d_%02d%02d%02d.dat",N,day,month,year,hour,minute,second);
 	FILE *fpdat = fopen(filedat,"w");
 
-	fprintf(fpdat,"z[m] density[#/m3] Ux[m/s] Uy[m/s] Uz[m/s] T[K] T_orth[K] T_paral[K] P[N/m2] Pxx[N/m2] Pyy[N/m2] Pzz[N/m2] Pxy[N/m2] Pxz[N/m2] Pyz[N/m2] Jx[W/m2] Jy[W/m2] Jz[W/m2] Ex[W/m2] Ey[W/m2] Ez[W/m2] Ex1 Ey1 Ez1 Pe[J] Enthalpy[J/kg] Occupation VarT varT_orth varT_paral\n");
+	fprintf(fpdat,"z[m] density[#/m3] Ux[m/s] Uy[m/s] Uz[m/s] T[K] T_orth[K] T_paral[K] P[N/m2] Pxx[N/m2] Pyy[N/m2] Pzz[N/m2] Pxy[N/m2] Pxz[N/m2] Pyz[N/m2] Jx[W/m2] Jy[W/m2] Jz[W/m2] Ex[W/m2] Ey[W/m2] Ez[W/m2] Pe[J] Enthalpy[J/kg] Occupation VarT varT_orth varT_paral bin_mean_z[m]\n");
 
 	double NvarT;
 	double NvarT_orth;
